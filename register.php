@@ -9,6 +9,8 @@
                 <input name="username" placeholder="Enter username" type="text">
                 <input name="password" placeholder="Enter password" type="password">
                 <input name="repeat_password" placeholder="Repeat Password" type="password">
+                <input name="first_name" placeholder="Enter firstname" type="text">
+                <input name="last_name" placeholder="Enter lastname" type="text">
                 <button name="submit" type="submit">Sign up!</button>
             </form>
 

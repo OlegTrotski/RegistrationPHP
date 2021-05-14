@@ -7,6 +7,8 @@ if (isset($_POST["submit"]))
     $username = $_POST["username"];
     $password = $_POST["password"];
     $repeat_password = $_POST["repeat_password"];
+    $first_name = $_POST["first_name"];
+    $last_name = $_POST["last_name"];
 
     if (emptyInputs($username,$password,$repeat_password) == true)
     {
@@ -28,7 +30,7 @@ if (isset($_POST["submit"]))
         header("Location: ../register.php?error=logintaken");
         exit();
     }
-    createUser($connection,$username,$password);
+    createUser($connection,$username,$password, $firstname, $lastname);
    
 }
 else

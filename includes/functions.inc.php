@@ -43,9 +43,9 @@ function incorrectLogin($username)
 return $result;
 }
 
-function createUser($connection,$username,$password)
+function createUser($connection,$username,$password, $first_name, $last_name)
 {
-    $sql = "INSERT INTO users (username,password) VALUES (?,?);";
+    $sql = "INSERT INTO users (username,password, first_name, last_name) VALUES (?,?,?,?);";
     $stmt = mysqli_stmt_init($connection);
     if (!mysqli_stmt_prepare($stmt,$sql))
     {
@@ -53,7 +53,7 @@ function createUser($connection,$username,$password)
         exit();
     }
     $pwdhashed = password_hash($password,PASSWORD_DEFAULT);
-    mysqli_stmt_bind_param($stmt,"ss",$username,$pwdhashed);
+    mysqli_stmt_bind_param($stmt,"ssss",$username,$pwdhashed, $firstname, $lastname);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     header("Location: ../register.php?registration=success");
@@ -105,6 +105,8 @@ function userLogin($connection,$username,$password)
         $_SESSION['id'] = $userExists['id'];
         $_SESSION['username'] = $userExists['username'];
         $_SESSION['profileimage'] = $userExists['profileimage'];
+        $_SESSION['first_name'] = $userExists['first_name'];
+        $_SESSION['last_name'] = $userExists['last_name'];
         header("Location: ../index.php");
         exit();
     }
@@ -123,7 +125,7 @@ function emptyInputsLogin($username,$password)
     }
 return $result;
 }
-function profileEdit($username,$uploadedfile,$connection)
+function profileEdit($username,$uploadedfile,$connection, $first_name, $last_name)
 {
     $sql = "UPDATE users SET profileimage = ? WHERE username = ?;";
     $stmt = mysqli_stmt_init($connection);
@@ -137,5 +139,32 @@ function profileEdit($username,$uploadedfile,$connection)
     $query_get = mysqli_stmt_get_result($stmt);
     mysqli_stmt_close($stmt);
     header("Location: ../profile.php");
+
 }
+
+function incorrectNames($connection, $username, $first_name, $last_name)
+{
+    $result;
+    if (!preg_match("/^[a-zA-Z0-9]*$/",$first_name) || !preg_match("/^[a-zA-Z0-9]*$/",$last_name) || empty($first_name) || empty($last_name))
+    {
+        $result = true;
+    }
+    else
+    {
+        $sql = "UPDATE users SET first_name = ?, last_name = ? WHERE username = ?;";
+        $stmt = mysqli_stmt_init($connection);
+        if (!mysqli_stmt_prepare($stmt,$sql))
+        {
+            header("Location: ../profile.php?error=stmt");
+            exit();
+        }
+        mysqli_stmt_bind_param($stmt,"sss",$first_name, $last_name, $username);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+        $result = false;
+    }
+    echo $result;
+return $result;
+}
+
 ?>
